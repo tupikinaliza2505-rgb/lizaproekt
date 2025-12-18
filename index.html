@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-коды: от истории до безопасности</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background-color: #3a506b;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background-color: #1c2541;
+            transform: translateY(-2px);
+        }
+        
+        .active {
+            background-color: #5bc0be;
+            color: #1c2541;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .hero {
+            background-color: white;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .hero h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .qr-image {
+            width: 180px;
+            height: 180px;
+            margin: 1.5rem auto;
+            background: linear-gradient(45deg, #2c3e50, #5bc0be);
+            border-radius: 15px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .qr-image::before, .qr-image::after {
+            content: "";
+            position: absolute;
+            background-color: white;
+            border-radius: 5px;
+        }
+        
+        .qr-image::before {
+            width: 50px;
+            height: 50px;
+            border: 8px solid #2c3e50;
+        }
+        
+        .qr-image::after {
+            width: 120px;
+            height: 20px;
+            bottom: 30px;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: #5bc0be;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a8b8a;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(91, 192, 190, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #1c2541;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(44, 62, 80, 0.3);
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.7rem;
+            border-bottom: 2px solid #5bc0be;
+            display: inline-block;
+        }
+        
+        .section p, .section li {
+            margin-bottom: 1rem;
+            color: #444;
+        }
+        
+        .section ul, .section ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .warning {
+            background-color: #fff8e1;
+            border-left: 5px solid #ff9800;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .safe {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .question {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question:last-child {
+            border-bottom: none;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.7rem;
+        }
+        
+        .option {
+            padding: 0.9rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .option:hover {
+            background-color: #e9ecef;
+            border-color: #5bc0be;
+        }
+        
+        .option.selected {
+            background-color: #d1ecf1;
+            border-color: #17a2b8;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .test-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #eee;
+        }
+        
+        .result {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .result h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        
+        .score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #5bc0be;
+            margin: 1rem 0;
+        }
+        
+        .restart-btn {
+            margin-top: 1.5rem;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .structure-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid #ddd;
+            background-color: #f0f7ff;
+            padding: 1rem;
+        }
+        
+        .question-counter {
+            display: inline-block;
+            background-color: #5bc0be;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .hero {
+                padding: 2rem 1.5rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav a {
+                width: 100%;
+                max-width: 250px;
+                text-align: center;
+            }
+            
+            .test-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .test-controls .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>QR-коды: от истории до безопасности</h1>
+        <p class="subtitle">Изучите структуру, применение и риски QR-кодов</p>
+    </header>
+    
+    <nav>
+        <a href="#" class="nav-link active" data-page="home">Главная</a>
+        <a href="#" class="nav-link" data-page="theory">Теория</a>
+        <a href="#" class="nav-link" data-page="test">Тест</a>
+    </nav>
+    
+    <div class="container">
+        <!-- Главная страница -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <div class="qr-image"></div>
+                <h2>Всё о QR-кодах в одном месте</h2>
+                <p>Узнайте историю создания, структуру, применение и главные правила безопасности при использовании QR-кодов. Проверьте свои знания с помощью интерактивного теста.</p>
+                
+                <div class="button-group">
+                    <a href="#" class="btn btn-primary" id="to-theory-btn">Изучить теорию</a>
+                    <a href="#" class="btn btn-secondary" id="to-test-btn">Пройти тест</a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>Краткий обзор</h3>
+                <p>QR-код (Quick Response — «быстрый ответ») — это двумерный матричный код, изобретённый в 1994 году японской компанией Denso Wave для отслеживания деталей в автомобильной промышленности.</p>
+                <p>Сегодня QR-коды используются повсеместно: от оплаты товаров и услуг до идентификации личности и доступа к образовательным материалам.</p>
+                <div class="warning">
+                    <p><strong>Внимание:</strong> Мошенники используют QR-фишинг (quishing) для кражи личных данных. Будьте осторожны при сканировании непроверенных кодов!</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Страница теории -->
+        <div id="theory" class="page">
+            <div class="hero">
+                <h2>Теория QR-кодов</h2>
+                <p>Подробная информация о структуре, применении и безопасности QR-кодов</p>
+            </div>
+            
+            <div class="section">
+                <h3>1. Что такое QR-код?</h3>
+                <p>QR-код (Quick Response — «быстрый ответ») — это двумерный матричный код, изобретённый в 1994 году японской компанией Denso Wave для отслеживания деталей в автомобильной промышленности.</p>
+                <ul>
+                    <li><strong>Создатель:</strong> Хосэй Масахиро Хара</li>
+                    <li><strong>Вдохновение:</strong> японские настольные игры (го, сёги)</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h3>2. Структура QR-кода</h3>
+                <div style="text-align: center; margin: 1.5rem 0;">
+    <img src="pop.png" alt="Структура QR-кода" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <p style="font-style: italic; color: #666; margin-top: 0.5rem;">Пример QR-кода с выделенными элементами структуры</p>
+                </div>
+                <ul>
+                    <li><strong>Поисковые узоры</strong> (3 квадрата по углам) — помогают сканеру определить ориентацию кода.</li>
+                    <li><strong>Выравнивающие узоры</strong> — улучшают точность считывания при искажении.</li>
+                    <li><strong>Полосы синхронизации</strong> — линии из чёрно-белых модулей для определения размера.</li>
+                    <li><strong>Код версии</strong> — указывает на версию QR-кода.</li>
+                    <li><strong>Код маски и уровня коррекции</strong> — помогает исправить ошибки при повреждении.</li>
+                    <li><strong>Данные с кодами коррекции</strong> — основная информация + резервные копии.</li>
+                    <li><strong>Белое поле</strong> — обязательная рамка для корректного сканирования.</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h3>3. Где используются QR-коды?</h3>
+                <ul>
+                    <li><strong>Оплата товаров и услуг</strong> (СБП, банковские приложения).</li>
+                    <li><strong>Транспорт:</strong> электронные билеты, посадочные талоны.</li>
+                    <li><strong>Образование:</strong> доступ к учебным материалам, видеоурокам, тестам.</li>
+                    <li><strong>Идентификация:</strong> QR-код вместо паспорта через «Госуслуги» (с 2025 года).</li>
+                    <li><strong>Логистика и торговля:</strong> отслеживание товаров, управление запасами.</li>
+                    <li><strong>Культура и туризм:</strong> информация о памятниках, экспонатах.</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h3>4. Опасности: QR-фишинг («quishing»)</h3>
+                <div class="warning">
+                    <p><strong>Что это?</strong> Мошенники создают поддельные QR-коды, которые ведут на фишинговые сайты или загружают вредоносные программы.</p>
+                    <p><strong>Цель:</strong> кража личных данных, паролей, банковской информации.</p>
+                </div>
+                <h4>Как защититься?</h4>
+                <div class="safe">
+                    <p>✅ Сканируйте только коды в доверенных местах.</p>
+                    <p>✅ Проверяйте URL перед переходом.</p>
+                    <p>❌ Не вводите данные на подозрительных сайтах.</p>
+                    <p>❌ Не сканируйте коды на стикерах в общественных местах.</p>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>5. Правила безопасного использования</h3>
+                <ul>
+                    <li>Проверяйте источник (музей, магазин, школа — хорошо; столб, анонимный флаер — плохо).</li>
+                    <li>Смотрите на URL — если ссылка странная, не переходите.</li>
+                    <li>Не передавайте личные данные после сканирования.</li>
+                    <li>Используйте официальные приложения для сканирования (камера смартфона, «Госуслуги»).</li>
+                    <li>Обновляйте антивирус на телефоне.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Страница теста -->
+        <div id="test" class="page">
+            <div class="hero">
+                <h2>Проверьте свои знания о QR-кодах</h2>
+                <p>Ответьте на 10 вопросов и узнайте, насколько хорошо вы разбираетесь в теме QR-кодов</p>
+            </div>
+            
+            <div id="quiz-container">
+                <!-- Вопросы будут добавлены с помощью JavaScript -->
+            </div>
+            
+            <div class="test-controls">
+                <button id="prev-btn" class="btn btn-secondary">← Назад</button>
+                <div id="progress-text">Вопрос 1 из 10</div>
+                <button id="next-btn" class="btn btn-primary">Далее →</button>
+            </div>
+            
+            <div id="result" class="result">
+                <h3>Результаты теста</h3>
+                <p>Вы ответили правильно на</p>
+                <div class="score" id="score">0/10</div>
+                <p id="result-message"></p>
+                <button id="restart-btn" class="btn btn-primary restart-btn">Пройти тест снова</button>
+                <button id="show-answers-btn" class="btn btn-secondary restart-btn" style="margin-left: 10px;">Показать правильные ответы</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2023 QR-коды: от истории до безопасности. Памятка по безопасному использованию.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">Для образовательных целей</p>
+    </footer>
+    
+    <script>
+        // Данные теста
+        const quizData = [
+            {
+                question: "1. В каком году был создан QR-код?",
+                options: ["а) 1985", "б) 1994", "в) 2001", "г) 2010"],
+                correct: 1,
+                explanation: "Правильный ответ: <strong>1994</strong>. QR-код был создан в 1994 году японской компанией Denso Wave."
+            },
+            {
+                question: "2. Как называется мошенничество с помощью QR-кодов?",
+                options: ["а) QR-скам", "б) QR-фишинг (quishing)", "в) QR-атака", "г) Код-кража"],
+                correct: 1,
+                explanation: "Правильный ответ: <strong>QR-фишинг (quishing)</strong>. Это мошенническая техника, при которой злоумышленники создают поддельные QR-коды."
+            },
+            {
+                question: "3. Какой элемент QR-кода помогает исправить ошибки при повреждении?",
+                options: ["а) Поисковый узор", "б) Код коррекции ошибок", "в) Белое поле", "г) Полосы синхронизации"],
+                correct: 1,
+                explanation: "Правильный ответ: <strong>Код коррекции ошибок</strong>. Этот элемент позволяет восстановить данные, даже если часть кода повреждена."
+            },
+            {
+                question: "4. Какой вид QR-кода можно изменить после создания?",
+                options: ["а) Статический", "б) Динамический", "в) Микро-QR", "г) Невидимый"],
+                correct: 1,
+                explanation: "Правильный ответ: <strong>Динамический</strong>. Динамические QR-коды позволяют изменять содержимое (URL) после создания, в то время как статические фиксированы."
+            },
+            {
+                question: "5. Где НЕ следует сканировать QR-код?",
+                options: ["а) В музее", "б) На учебном стенде в школе", "в) На стикере на остановке", "г) В официальном приложении банка"],
+                correct: 2,
+                explanation: "Правильный ответ: <strong>На стикере на остановке</strong>. Наклейки в общественных местах могут быть размещены мошенниками для фишинга."
+            },
+            {
+                question: "6. Какую информацию НЕ стоит вводить после сканирования QR-кода?",
+                options: ["а) Имя", "б) Пароль от соцсети", "в) Номер телефона (если это необходимо)", "г) Адрес электронной почты"],
+                correct: 1,
+                explanation: "Правильный ответ: <strong>Пароль от соцсети</strong>. Никогда не вводите пароли после сканирования QR-кода, особенно если сайт выглядит подозрительно."
+            },
+            {
+                question: "7. Какой элемент QR-кода отсутствует в правом нижнем углу?",
+                options: ["а) Поисковый узор", "б) Выравнивающий узор", "в) Код версии", "г) Полосы синхронизации"],
+                correct: 0,
+                explanation: "Правильный ответ: <strong>Поисковый узор</strong>. Поисковые узоры расположены только в трех углах: левом верхнем, правом верхнем и левом нижнем."
+            },
+            {
+                question: "8. Что такое «белое поле» в QR-коде?",
+                options: ["а) Рамка для красоты", "б) Обязательный отступ для сканирования", "в) Место для логотипа", "г) Область данных"],
+                correct: 1,
+                explanation: "Правильный ответ: <strong>Обязательный отступ для сканирования</strong>. Белое поле (quiet zone) необходимо для корректного распознавания кода сканером."
+            },
+            {
+                question: "9. Какое приложение в России позволяет использовать QR-код вместо паспорта?",
+                options: ["а) Яндекс.Карты", "б) Госуслуги", "в) Сбербанк Онлайн", "г) VK"],
+                correct: 1,
+                explanation: "Правильный ответ: <strong>Госуслуги</strong>. С 2025 года в приложении «Госуслуги» можно использовать QR-код вместо паспорта в некоторых ситуациях."
+            },
+            {
+                question: "10. Какой уровень коррекции ошибок в QR-коде самый высокий?",
+                options: ["а) L (Low)", "б) M (Medium)", "в) Q (Quartile)", "г) H (High)"],
+                correct: 3,
+                explanation: "Правильный ответ: <strong>H (High)</strong>. Уровни коррекции ошибок: L (7%), M (15%), Q (25%), H (30%). Уровень H позволяет восстановить до 30% поврежденного кода."
+            }
+        ];
+
+        // Элементы DOM
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const homePage = document.getElementById('home');
+        const theoryPage = document.getElementById('theory');
+        const testPage = document.getElementById('test');
+        const toTheoryBtn = document.getElementById('to-theory-btn');
+        const toTestBtn = document.getElementById('to-test-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const resultDiv = document.getElementById('result');
+        const scoreElement = document.getElementById('score');
+        const resultMessage = document.getElementById('result-message');
+        const restartBtn = document.getElementById('restart-btn');
+        const showAnswersBtn = document.getElementById('show-answers-btn');
+        const progressText = document.getElementById('progress-text');
+
+        // Переменные теста
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let quizCompleted = false;
+
+        // Навигация по страницам
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const pageId = this.getAttribute('data-page');
+                
+                // Обновление активной ссылки
+                navLinks.forEach(link => link.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Показать выбранную страницу
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                    if (page.id === pageId) {
+                        page.classList.add('active');
+                    }
+                });
+                
+                // Если переходим на страницу теста, инициализируем его
+                if (pageId === 'test') {
+                    initQuiz();
+                }
+            });
+        });
+
+        // Кнопки на главной странице
+        toTheoryBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            navLinks.forEach(link => link.classList.remove('active'));
+            document.querySelector('[data-page="theory"]').classList.add('active');
+            
+            pages.forEach(page => page.classList.remove('active'));
+            theoryPage.classList.add('active');
+        });
+
+        toTestBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            navLinks.forEach(link => link.classList.remove('active'));
+            document.querySelector('[data-page="test"]').classList.add('active');
+            
+            pages.forEach(page => page.classList.remove('active'));
+            testPage.classList.add('active');
+            initQuiz();
+        });
+
+        // Инициализация теста
+        function initQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            quizCompleted = false;
+            resultDiv.style.display = 'none';
+            quizContainer.style.display = 'block';
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            progressText.style.display = 'block';
+            
+            showQuestion();
+            updateButtons();
+        }
+
+        // Показать вопрос
+        function showQuestion() {
+            quizContainer.innerHTML = '';
+            
+            const questionData = quizData[currentQuestion];
+            const questionElement = document.createElement('div');
+            questionElement.className = 'question';
+            
+            questionElement.innerHTML = `
+                <div class="question-counter">Вопрос ${currentQuestion + 1} из ${quizData.length}</div>
+                <div class="question-text">${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, index) => `
+                        <div class="option ${userAnswers[currentQuestion] === index ? 'selected' : ''}" data-index="${index}">
+                            ${option}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            quizContainer.appendChild(questionElement);
+            
+            // Обновить текст прогресса
+            progressText.textContent = `Вопрос ${currentQuestion + 1} из ${quizData.length}`;
+            
+            // Добавить обработчики для вариантов ответа
+            const options = questionElement.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    if (quizCompleted) return;
+                    
+                    const selectedIndex = parseInt(this.getAttribute('data-index'));
+                    userAnswers[currentQuestion] = selectedIndex;
+                    
+                    // Снять выделение со всех вариантов
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Выделить выбранный вариант
+                    this.classList.add('selected');
+                    
+                    // Обновить кнопки
+                    updateButtons();
+                });
+            });
+        }
+
+        // Обновление кнопок навигации
+        function updateButtons() {
+            // Кнопка "Назад"
+            if (currentQuestion === 0) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'block';
+            }
+            
+            // Кнопка "Далее"
+            if (currentQuestion === quizData.length - 1) {
+                nextBtn.textContent = 'Завершить тест';
+            } else {
+                nextBtn.textContent = 'Далее →';
+            }
+            
+            // Активировать кнопку "Далее" только если выбран ответ
+            if (userAnswers[currentQuestion] !== null) {
+                nextBtn.disabled = false;
+                nextBtn.style.opacity = '1';
+                nextBtn.style.cursor = 'pointer';
+            } else {
+                nextBtn.disabled = true;
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.cursor = 'not-allowed';
+            }
+        }
+
+        // Обработчики кнопок навигации
+        prevBtn.addEventListener('click', function() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+                updateButtons();
+            }
+        });
+
+        nextBtn.addEventListener('click', function() {
+            if (userAnswers[currentQuestion] === null) {
+                alert("Пожалуйста, выберите ответ перед продолжением!");
+                return;
+            }
+            
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                showQuestion();
+                updateButtons();
+            } else {
+                // Завершить тест
+                finishQuiz();
+            }
+        });
+
+        // Завершение теста
+        function finishQuiz() {
+            // Подсчет правильных ответов
+            let correctCount = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer === quizData[index].correct) {
+                    correctCount++;
+                }
+            });
+            
+            // Отображение результатов
+            scoreElement.textContent = `${correctCount}/${quizData.length}`;
+            
+            // Сообщение в зависимости от результата
+            let message = "";
+            if (correctCount <= 3) {
+                message = "Вам стоит изучить теорию QR-кодов более внимательно! Рекомендуем вернуться на страницу с теорией.";
+            } else if (correctCount <= 6) {
+                message = "Неплохой результат, но есть куда стремиться! Повторите материал по QR-кодам.";
+            } else if (correctCount <= 8) {
+                message = "Хороший результат! Вы хорошо разбираетесь в теме QR-кодов.";
+            } else {
+                message = "Отличный результат! Вы отлично разбираетесь в теме QR-кодов и знаете правила безопасности!";
+            }
+            resultMessage.innerHTML = message;
+            
+            // Показать результат
+            resultDiv.style.display = 'block';
+            quizContainer.style.display = 'none';
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressText.style.display = 'none';
+            
+            quizCompleted = true;
+        }
+
+        // Кнопка перезапуска теста
+        restartBtn.addEventListener('click', function() {
+            initQuiz();
+        });
+
+        // Показать правильные ответы
+        showAnswersBtn.addEventListener('click', function() {
+            quizContainer.innerHTML = '';
+            quizContainer.style.display = 'block';
+            resultDiv.style.display = 'none';
+            
+            quizData.forEach((questionData, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question';
+                
+                // Определить класс для варианта ответа пользователя
+                let userAnswerClass = '';
+                let userAnswerText = '';
+                
+                if (userAnswers[index] !== null) {
+                    userAnswerText = questionData.options[userAnswers[index]];
+                    if (userAnswers[index] === questionData.correct) {
+                        userAnswerClass = 'correct';
+                    } else {
+                        userAnswerClass = 'incorrect';
+                    }
+                }
+                
+                questionElement.innerHTML = `
+                    <div class="question-counter">Вопрос ${index + 1} из ${quizData.length}</div>
+                    <div class="question-text">${questionData.question}</div>
+                    <div class="options">
+                        ${questionData.options.map((option, optionIndex) => {
+                            let optionClass = '';
+                            if (optionIndex === questionData.correct) {
+                                optionClass = 'correct';
+                            } else if (userAnswers[index] === optionIndex && optionIndex !== questionData.correct) {
+                                optionClass = 'incorrect';
+                            }
+                            return `<div class="option ${optionClass}">${option}</div>`;
+                        }).join('')}
+                    </div>
+                    <div style="margin-top: 1rem; padding: 1rem; background-color: #f0f8ff; border-radius: 8px;">
+                        <strong>Объяснение:</strong> ${questionData.explanation}
+                        ${userAnswers[index] !== null ? `<br><strong>Ваш ответ:</strong> <span class="${userAnswerClass}">${userAnswerText}</span>` : '<br><strong>Вы не ответили на этот вопрос</strong>'}
+                    </div>
+                `;
+                
+                quizContainer.appendChild(questionElement);
+            });
+            
+            // Добавить кнопку возврата к результатам
+            const backToResultsBtn = document.createElement('button');
+            backToResultsBtn.className = 'btn btn-primary';
+            backToResultsBtn.textContent = 'Вернуться к результатам';
+            backToResultsBtn.style.marginTop = '1.5rem';
+            backToResultsBtn.addEventListener('click', function() {
+                resultDiv.style.display = 'block';
+                quizContainer.style.display = 'none';
+            });
+            
+            quizContainer.appendChild(backToResultsBtn);
+        });
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initQuiz();
+        });
+    </script>
+</body>
+</html>
